@@ -23,7 +23,13 @@
   }
 
   // ---------- Local session (who's logged in) ----------
-  const SESSION_KEY = 'moto_academy_session';
+  // Namespaced per academy: GitHub Pages serves every academy site under the
+  // same origin (motosamerica.github.io), and localStorage is scoped by
+  // origin, not by path/repo. An unprefixed key here would let a leftover
+  // session from a different academy site silently carry over — the visitor
+  // never sees the login screen, and the TOC renders using that other
+  // academy's trainee record and progress instead of a real first visit.
+  const SESSION_KEY = 'moto_academy_ma_session';
 
   function getSession() {
     try {
@@ -44,7 +50,8 @@
 
   // ---------- Local progress cache (works even if Supabase is offline) ----------
   // Keyed by trainee id. Each entry: { [quizKey]: {scorePct, correct, total, completedAt} }
-  const PROGRESS_KEY = 'moto_academy_progress';
+  // Namespaced per academy for the same same-origin reason as SESSION_KEY above.
+  const PROGRESS_KEY = 'moto_academy_ma_progress';
 
   function getLocalProgress(traineeId) {
     try {
@@ -68,7 +75,8 @@
 
   // ---------- Pending sync queue (for flaky connections) ----------
   // If a Supabase write fails, we queue it here and retry on next load / action.
-  const QUEUE_KEY = 'moto_academy_pending_sync';
+  // Namespaced per academy for the same same-origin reason as SESSION_KEY above.
+  const QUEUE_KEY = 'moto_academy_ma_pending_sync';
 
   function getQueue() {
     try {
